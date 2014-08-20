@@ -1,40 +1,26 @@
 module ("Network", package.seeall)
-local _net=nil
+_net=nil
 local tm_cbFuncs = {}
 local re_cbFuncs = {}
 local no_loading_cbFunc = {}
 function netInit()
     _net=NetUtil:create()
 end 
--- lua层主动调用网络连接接口
--- phost: 服务器hostname或ip
--- pport: 服务器端口
-function connect (phost, pport)
-    local dhost = phost or g_host
-    local dport = pport or g_port
-
---    local client = BTNetClient:getInstance()
-
-    if (not _net:connect(dhost, dport)) then
---        CCLuaLog("The network is unavailable.")
+function Connect(addres,nPort) --@return typeOrObject
+    if (not _net:connect(addres, nPort)) then
+        cclog("The network is unavailable.")
         return false
-    end
-    return true
+     end
+cclog("The network is ok--------------->")
+return true
 end
---调用网络接口 
---cbFunc: 回调的方法 type->lua function
---cbFlag: 回调的标识名称, 用于区别其他回调 type->string
---rpcName: 调用后端函数的名称 type->string
---args: 调用函数需要的参数  type->CCArray
---autoRelease: 调用完成后是否删除此回调方法
---return:无
 function rpc(cbFunc, cbFlag, rpcName, args, autoRelease)
 --    local disp = BTEventDispatcher:getInstance()
-    local sendString = args:SerializeToString()
+    local sendString = args
     cclog("--------->%s",sendString)
-    local a=string.byte(sendString,1)
     local sendData={string.byte(sendString,1,-1)}
-    cclog("sendPack: \n"..text_format.msg_format(args))
+    --cclog("sendPack: \n"..text_format.msg_format(args))
+    if _net==nil then cclog("nilll----->") return  end 
     _net:addLuaHandler(cbFlag, networkHandler, autoRelease)
     _net:callRPC(cbFlag, rpcName, sendData,table.getn(sendData))
 
