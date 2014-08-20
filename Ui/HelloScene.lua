@@ -29,6 +29,7 @@ function HelloScene:init()
     self.Name=root:getChildByName("name_TextField")
     self.Pass=root:getChildByName("password_TextField")
     require "Network"
+    cclog("git")
     Network.netInit()
     Network.Connect("localhost", 1235)
 --    Network.Connect("fbjellyth.topgame.com", 3100)
